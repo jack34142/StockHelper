@@ -1,3 +1,5 @@
+package network.co.imge.stockhelper.pojo
+
 import com.google.gson.annotations.SerializedName
 
 data class MyResponse<T> (

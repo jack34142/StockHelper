@@ -1,18 +1,16 @@
 package network.co.imge.stockhelper.http
 
-import MyResponse
-import android.util.Log
 import com.google.gson.GsonBuilder
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import network.co.imge.stockhelper.pojo.TwseResponse
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 class HttpClient private constructor(){
     private val TAG: String = "HttpClient"
@@ -28,10 +26,15 @@ class HttpClient private constructor(){
     }
 
     init {
-        val client = OkHttpClient.Builder().build()
+        val logging = HttpLoggingInterceptor()
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client = OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+
         val gson = GsonBuilder().setLenient().create()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.1.134")
+            .baseUrl("http://www.google.com")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
@@ -40,8 +43,8 @@ class HttpClient private constructor(){
         service = retrofit.create(ApiService::class.java)
     }
 
-    fun test(onSuccess: (MyResponse<Any>) -> Unit): Disposable {
-        return service.test().subscribeOn(Schedulers.io())
+    fun getNowPrice(onSuccess: (TwseResponse) -> Unit): Disposable {
+        return service.getNowPrice("tse_2330.tw").subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = onSuccess,
