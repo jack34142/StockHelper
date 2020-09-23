@@ -28,18 +28,28 @@ class NoticeStockDAO(context: Context) {
         }
     }
 
-    fun insert(stock: NoticeStock){
-        val stockId = stock.stockId
+    fun insert(stock: NoticeStock): NoticeStock{
         val values = ContentValues().apply {
             put(COL_STOCK_ID, stock.stockId)
             put(COL_TYPE, stock.type)
             put(COL_PRICE, stock.price)
         }
-        val count = db!!.update(TABLE_NAME, values,
-            "$COL_STOCK_ID = ?", arrayOf(stockId))
-        if (count == 0){
-            db?.insert(TABLE_NAME, null, values)
+        val id = db!!.insert(TABLE_NAME, null, values)
+        stock.id = id
+        return stock
+    }
+
+    fun update(stock: NoticeStock){
+        val values = ContentValues().apply {
+            put(COL_STOCK_ID, stock.stockId)
+            put(COL_TYPE, stock.type)
+            put(COL_PRICE, stock.price)
         }
+        db?.update(TABLE_NAME, values,"$PRIMARY_KEY = ?", arrayOf(stock.id.toString()))
+    }
+
+    fun delete(id: Long){
+        db?.delete(TABLE_NAME, "$PRIMARY_KEY = ?", arrayOf(id.toString()))
     }
 
     fun getAll(): List<NoticeStock>{
@@ -47,6 +57,7 @@ class NoticeStockDAO(context: Context) {
             mutableListOf<NoticeStock>().apply {
                 while (moveToNext()){
                     add(NoticeStock(
+                        getLong(getColumnIndex(PRIMARY_KEY)),
                         getString(getColumnIndex(COL_STOCK_ID)),
                         getString(getColumnIndex(COL_TYPE)),
                         getDouble(getColumnIndex(COL_PRICE))

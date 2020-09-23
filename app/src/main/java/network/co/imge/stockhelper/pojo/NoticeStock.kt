@@ -1,7 +1,8 @@
 package network.co.imge.stockhelper.pojo
 
 data class NoticeStock (
-	val stockId : String,
-	val type : String,
-	val price : Double
+	var id: Long? = null,
+	var stockId : String? = null,
+	var type : String? = null,
+	var price : Double? = null
 )

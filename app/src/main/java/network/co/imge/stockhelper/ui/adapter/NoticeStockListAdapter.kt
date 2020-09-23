@@ -3,12 +3,16 @@ package network.co.imge.stockhelper.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.pojo.NoticeStock
 
-class NoticeStockListAdapter(val stocks: List<NoticeStock>) : RecyclerView.Adapter<MyHolder>() {
+class NoticeStockListAdapter(val stocks: List<NoticeStock>,
+                             val onEdit: (Int, NoticeStock) -> Unit,
+                             val onDelete: (Int) -> Unit
+) : RecyclerView.Adapter<MyHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder {
         val v = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item_notice_stock, parent, false)
@@ -24,6 +28,12 @@ class NoticeStockListAdapter(val stocks: List<NoticeStock>) : RecyclerView.Adapt
         holder.text_stockId.text = stock.stockId
         holder.text_type.text = stock.type
         holder.text_price.text = stock.price.toString()
+        holder.itemView.setOnClickListener{
+            onEdit(position, stock)
+        }
+        holder.iBtn_delete.setOnClickListener{
+            onDelete(position)
+        }
     }
 }
 
@@ -31,4 +41,5 @@ class MyHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val text_stockId: TextView = itemView.findViewById(R.id.noticeStock_stockId)
     val text_type: TextView = itemView.findViewById(R.id.noticeStock_type)
     val text_price: TextView = itemView.findViewById(R.id.noticeStock_price)
+    val iBtn_delete: ImageButton = itemView.findViewById(R.id.noticeStock_delete)
 }

@@ -17,16 +17,24 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
         mvpModel = MainModel(mvpView as Context)
     }
 
-    override fun getNowPrice() {
-        mvpModel!!.getNowPrice {
+    override val addNoticeStock: (NoticeStock) -> Unit = {
+        mvpModel?.addNoticeStock(it)
+    }
+
+    override val updateNoticeStock: (NoticeStock) -> Unit = {
+        mvpModel?.updateNoticeStock(it)
+    }
+
+    override val deleteNoticeStock: (Long) -> Unit = {
+        mvpModel?.deleteNoticeStock(it)
+    }
+
+    override fun getRealtimePrice(stocks: List<NoticeStock>) {
+        mvpModel!!.getRealtimePrice(stocks){
 
         }.let {
             disposables?.add(it)
         }
-    }
-
-    override fun addNoticeStock(stock: NoticeStock) {
-        mvpModel!!.addNoticeStock(stock)
     }
 
     override fun getNoticeStocks() {

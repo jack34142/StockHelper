@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">StockHelper</string>
+
+    <string name="add">新增</string>
+    <string name="stock_id">股票代號</string>
+    <string name="tse">上市</string>
+    <string name="otc">上櫃</string>
+    <string name="notice_price">提醒價</string>
+    <string name="complete">完成</string>
+    <string name="cancel">取消</string>
+    <string name="data_not_complete">資料未完全</string>
 </resources>

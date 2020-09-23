@@ -19,12 +19,21 @@ class MainModel(val context: Context) : BaseModel(), MainContract.IMainModel {
         noticeStockDAO = null
     }
 
-    override fun getNowPrice(onSuccess: (TwseResponse) -> Unit): Disposable {
-        return HttpClient.instance.getNowPrice(onSuccess)
+    override fun addNoticeStock(stock: NoticeStock): NoticeStock {
+        return noticeStockDAO!!.insert(stock)
     }
 
-    override fun addNoticeStock(stock: NoticeStock) {
-        noticeStockDAO?.insert(stock)
+    override fun updateNoticeStock(stock: NoticeStock) {
+        noticeStockDAO?.update(stock)
+    }
+
+    override fun deleteNoticeStock(id: Long) {
+        noticeStockDAO?.delete(id)
+    }
+
+    override fun getRealtimePrice(stocks: List<NoticeStock>,
+                                  onSuccess: (List<TwseResponse>) -> Unit): Disposable {
+        return HttpClient.instance.getRealtimePrice(stocks, onSuccess)
     }
 
     override fun getNoticeStocks(): List<NoticeStock> {

@@ -2,6 +2,7 @@ package network.co.imge.stockhelper.ui.activity
 
 import android.os.Bundle
 import android.widget.Button
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import network.co.imge.stockhelper.R
@@ -10,7 +11,7 @@ import network.co.imge.stockhelper.mvp.contract.MainContract
 import network.co.imge.stockhelper.mvp.presenter.MainPresenter
 import network.co.imge.stockhelper.pojo.NoticeStock
 import network.co.imge.stockhelper.ui.adapter.NoticeStockListAdapter
-import network.co.imge.stockhelper.ui.dialog.AddDialog
+import network.co.imge.stockhelper.ui.dialog.AddNoticeStockDialog
 
 class MainActivity : BaseActivity(), MainContract.IMainView {
     private val TAG: String = "MainActivity"
@@ -47,17 +48,12 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
 
     private fun initListener(){
         btn_test.setOnClickListener{
-            AddDialog(this) {
-                presenter?.addNoticeStock(it)
-                for ((index, stock) in noticeStocks.withIndex()){
-                    if (stock.stockId == it.stockId) {
-                        noticeStocks[index] = it
-                    }else if (index == noticeStocks.size-1){
-                        noticeStocks.add(it)
-                    }
-                }
-                noticeStockListAdapter.notifyDataSetChanged()
-            }.show()
+            presenter?.getRealtimePrice(noticeStocks)
+//            AddNoticeStockDialog(this, null){
+//                presenter!!.addNoticeStock.invoke(it)
+//                noticeStocks.add(it)
+//                noticeStockListAdapter.notifyDataSetChanged()
+//            }.show()
         }
     }
 
@@ -70,7 +66,20 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
         noticeStocks = stocks
 
         noticeStockList.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        noticeStockListAdapter = NoticeStockListAdapter(noticeStocks)
+        noticeStockList.addItemDecoration(DividerItemDecoration(this, RecyclerView.VERTICAL))
+        noticeStockListAdapter = NoticeStockListAdapter(noticeStocks,
+            onEdit = { position, stock ->
+                AddNoticeStockDialog(this, stock){
+                    presenter!!.updateNoticeStock.invoke(it)
+                    noticeStocks[position] = it
+                    noticeStockListAdapter.notifyDataSetChanged()
+                }.show()
+            },
+            onDelete = {
+                presenter!!.deleteNoticeStock.invoke(stocks[it].id!!)
+                stocks.removeAt(it)
+                noticeStockListAdapter.notifyDataSetChanged()
+            })
         noticeStockList.adapter = noticeStockListAdapter
     }
 }

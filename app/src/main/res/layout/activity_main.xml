@@ -8,7 +8,7 @@
         android:id="@+id/main_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="測試"/>
+        android:text="@string/add"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/main_list"

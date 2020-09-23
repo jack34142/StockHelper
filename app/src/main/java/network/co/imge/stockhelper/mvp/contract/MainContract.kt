@@ -13,14 +13,18 @@ class MainContract {
     }
 
     interface IMainPresenter: IPresenter<IMainView>{
-        fun getNowPrice()
-        fun addNoticeStock(stock: NoticeStock)
+        val addNoticeStock: (NoticeStock) -> Unit
+        val updateNoticeStock: (NoticeStock) -> Unit
+        val deleteNoticeStock: (Long) -> Unit
+        fun getRealtimePrice(stocks: List<NoticeStock>)
         fun getNoticeStocks()
     }
 
     interface IMainModel: IModel {
-        fun getNowPrice(onSuccess: (TwseResponse) -> Unit): Disposable
-        fun addNoticeStock(stock: NoticeStock)
+        fun addNoticeStock(stock: NoticeStock): NoticeStock
+        fun updateNoticeStock(stock: NoticeStock)
+        fun deleteNoticeStock(id: Long)
+        fun getRealtimePrice(stocks: List<NoticeStock>, onSuccess: (List<TwseResponse>) -> Unit): Disposable
         fun getNoticeStocks(): List<NoticeStock>
     }
 }
