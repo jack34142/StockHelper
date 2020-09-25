@@ -5,11 +5,11 @@ import io.reactivex.disposables.Disposable
 import network.co.imge.stockhelper.base.BaseModel
 import network.co.imge.stockhelper.db.NoticeStockDAO
 import network.co.imge.stockhelper.http.HttpClient
-import network.co.imge.stockhelper.mvp.contract.MainContract
+import network.co.imge.stockhelper.mvp.contract.NoticeStockContract
 import network.co.imge.stockhelper.pojo.NoticeStock
 import network.co.imge.stockhelper.pojo.TwseResponse
 
-class MainModel(val context: Context) : BaseModel(), MainContract.IMainModel {
+class NoticeStockModel(val context: Context) : BaseModel(), NoticeStockContract.INoticeStockModel {
 
     private var noticeStockDAO: NoticeStockDAO? = NoticeStockDAO(context)
 
@@ -29,11 +29,6 @@ class MainModel(val context: Context) : BaseModel(), MainContract.IMainModel {
 
     override fun deleteNoticeStock(id: Long) {
         noticeStockDAO?.delete(id)
-    }
-
-    override fun getRealtimePrice(stocks: List<NoticeStock>,
-                                  onSuccess: (List<TwseResponse>) -> Unit): Disposable {
-        return HttpClient.instance.getRealtimePrice(stocks, onSuccess)
     }
 
     override fun getNoticeStocks(): List<NoticeStock> {
