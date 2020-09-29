@@ -1,13 +1,11 @@
 package network.co.imge.stockhelper.ui.adapter.receclerView
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.pojo.TwseResponse
@@ -16,7 +14,6 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
         RecyclerView.Adapter<RealtimePriceListAdapter.ViewHolder>() {
 
     var context: Context? = null
-    val latestPrice: MutableMap<String, Double> = mutableMapOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
@@ -35,21 +32,25 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
         holder.text_stockId.text = stockId
         holder.text_stockName.text = data.stockName
 
-        var nowPrice = data.nowPrice
-        if (nowPrice == null)
-            nowPrice = latestPrice[stockId]
-        else
-            latestPrice[stockId] = nowPrice
-
+        val nowPrice = data.nowPrice
         if (nowPrice == null){
             holder.text_nowPrice.text = "-"
         }else{
-            val diff = (nowPrice/data.yesterdayPrice - 1) * 100
+            var diff = (nowPrice/data.yesterdayPrice - 1) * 100
             holder.text_nowPrice.text = String.format("%.2f (%+.2f%%)", nowPrice, diff)
+
+            val aimPrice = data.aim!!.aimPrice
+            diff = (nowPrice/aimPrice - 1) * 100
+
+            val aimText = String.format("%.2f (%+.2f%%)", aimPrice, diff)
+            when (data.aim!!.method){
+                1 -> holder.text_aimPrice.text = "<" + aimText
+                -1 -> holder.text_aimPrice.text = ">" + aimText
+            }
         }
         holder.text_totalQty.text = data.totalQty.toString()
 
-        holder.best5grid.layoutManager = object: GridLayoutManager(context, 4){
+        holder.best5grid.layoutManager = object: GridLayoutManager(context, 2){
             override fun canScrollVertically(): Boolean {
                 return false
             }
@@ -61,6 +62,7 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
         val text_stockId: TextView = itemView.findViewById(R.id.realtimePrice_stockId)
         val text_stockName: TextView = itemView.findViewById(R.id.realtimePrice_stockName)
         val text_nowPrice: TextView = itemView.findViewById(R.id.realtimePrice_nowPrice)
+        val text_aimPrice: TextView = itemView.findViewById(R.id.realtimePrice_aimPrice)
         val text_totalQty: TextView = itemView.findViewById(R.id.realtimePrice_totalQty)
         val best5grid: RecyclerView = itemView.findViewById(R.id.realtimePrice_best5grid)
         val foreView: View = itemView.findViewById(R.id.realtimePrice_foreView)

@@ -27,7 +27,13 @@ class NoticeStockListAdapter(val stocks: List<NoticeStock>,
         val stock = stocks[position]
         holder.text_stockId.text = stock.stockId
         holder.text_type.text = stock.type
-        holder.text_price.text = stock.price.toString()
+
+        val price = stock.price!!
+        if (price > 0)
+            holder.text_price.text = "<" + price.toString()
+        else
+            holder.text_price.text = price.toString().replace("-", ">")
+
         holder.itemView.setOnClickListener{
             onEdit(position, stock)
         }

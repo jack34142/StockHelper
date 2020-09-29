@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -64,6 +65,14 @@ class NoticeStockFragment : BaseFragment(), NoticeStockContract.INoticeStockView
     private fun initListener(){
         btn_add.setOnClickListener{
             AddNoticeStockDialog(context!!, null){
+                val count = MyData.noticeStocks.filter {noticeStock ->
+                    noticeStock.stockId == it.stockId
+                }.size
+                if (count > 0){
+                    Toast.makeText(context, it.stockId + "已經存在", Toast.LENGTH_SHORT).show()
+                    return@AddNoticeStockDialog
+                }
+
                 presenter!!.addNoticeStock.invoke(it)
                 MyData.noticeStocks.add(it)
                 noticeStockListAdapter.notifyDataSetChanged()

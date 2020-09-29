@@ -8,6 +8,8 @@
     <string name="notice_price">提醒價</string>
     <string name="complete">完成</string>
     <string name="cancel">取消</string>
+    <string name="lower">低於</string>
+    <string name="higher">高於</string>
     <string name="data_not_complete">資料未完全</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

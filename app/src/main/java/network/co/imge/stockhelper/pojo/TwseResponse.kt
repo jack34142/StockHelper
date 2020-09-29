@@ -11,8 +11,14 @@ data class TwseResponse (
 	val highPrice : Double,
 	val lowPrice : Double,
 	val yesterdayPrice : Double,
-	val nowPrice : Double?,
+	var nowPrice : Double?,
 	val nowQty : Int?,
 	val totalQty : Int,
-	val type : String
+	val type : String,
+	var aim: Aim? = null
+)
+
+data class Aim (
+	val method : Int,
+	val aimPrice : Double
 )

@@ -13,6 +13,7 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
 
     private val eText_stockId: EditText
     private val rGroup_type: RadioGroup
+    private val rGroup_method: RadioGroup
     private val eText_price: EditText
     private val btn_cancel: Button
     private val btn_commit: Button
@@ -25,6 +26,7 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
 
         eText_stockId = v.findViewById(R.id.addNoticeStock_stockId)
         rGroup_type = v.findViewById(R.id.addNoticeStock_type)
+        rGroup_method = v.findViewById(R.id.addNoticeStock_method)
         eText_price = v.findViewById(R.id.addNoticeStock_price)
         btn_cancel = v.findViewById(R.id.addNoticeStock_cancel)
         btn_commit = v.findViewById(R.id.addNoticeStock_complete)
@@ -44,7 +46,11 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
                 R.id.addNoticeStock_otc -> "otc"
                 else -> null
             }
-            val price = eText_price.text.toString()
+            val price = when(rGroup_method.checkedRadioButtonId){
+                R.id.addNoticeStock_lower -> eText_price.text.toString()
+                R.id.addNoticeStock_higher -> "-" + eText_price.text.toString()
+                else -> ""
+            }
 
             if (stockId.isEmpty() || type == null || price.isEmpty()){
                 Toast.makeText(context,
@@ -66,6 +72,13 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
             "tse" -> rGroup_type.check(R.id.addNoticeStock_tse)
             "otc" -> rGroup_type.check(R.id.addNoticeStock_otc)
         }
-        eText_price.setText(stock.price.toString())
+
+        val price = stock.price!!
+        if(price > 0){
+            rGroup_method.check(R.id.addNoticeStock_lower)
+        }else{
+            rGroup_method.check(R.id.addNoticeStock_higher)
+        }
+        eText_price.setText(price.toString())
     }
 }

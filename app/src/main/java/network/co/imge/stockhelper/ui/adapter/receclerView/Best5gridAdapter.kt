@@ -1,49 +1,104 @@
 package network.co.imge.stockhelper.ui.adapter.receclerView
 
+import android.content.Context
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.pojo.TwseResponse
 
 class Best5gridAdapter(val data: TwseResponse): RecyclerView.Adapter<Best5gridAdapter.ViewHolder>() {
+    lateinit var context: Context
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val context = parent.context
-        val textView = TextView(context)
-
-        textView.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-        val scale = context.getResources().getDisplayMetrics().density
-        val verticalPagging = (2 * scale).toInt()
-        val horizontalPagging = (8 * scale).toInt()
-        textView.setPadding(horizontalPagging, verticalPagging, horizontalPagging, verticalPagging)
-
-        if (viewType == 0) textView.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
-        return ViewHolder(textView)
+        context = parent.context
+        val v = LayoutInflater.from(context).inflate(R.layout.grid_item_best5, parent, false)
+        return ViewHolder(v)
     }
 
     override fun getItemCount(): Int {
-        return 20
+        return 10
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val column = position % 4
-        val row = (position-column) / 4
+        val column = position % 2
+        val row = (position-column) / 2
 
-        val textView = holder.itemView as TextView
-        when(column){
-            0 -> textView.text = data.best5purchaseQty.getOrNull(row)?.toString() ?: "-"
-            1 -> textView.text = data.best5purchasePrice.getOrNull(row)?.toString() ?: "-"
-            2 -> textView.text = data.best5sellPrice.getOrNull(row)?.toString() ?: "-"
-            3 -> textView.text = data.best5sellQty.getOrNull(row)?.toString() ?: "-"
+        val yesterdayPrice = data.yesterdayPrice
+        val price: Double?
+        val qty: Int?
+
+        if(column == 0){
+            price = data.best5purchasePrice.getOrNull(row)
+            qty = data.best5purchaseQty.getOrNull(row)
+
+            holder.left.gravity = Gravity.END
+            holder.right.gravity = Gravity.END
+            if (price == null){
+                holder.right.text = "-"
+            }else if (price == 0.0){
+                holder.right.text = "市價"
+                holder.left.setTextColor(ContextCompat.getColor(context, R.color.red))
+                holder.right.setTextColor(ContextCompat.getColor(context, R.color.red))
+            }else{
+                holder.right.text = price.toString()
+                if (price > yesterdayPrice){
+                    holder.left.setTextColor(ContextCompat.getColor(context, R.color.red))
+                    holder.right.setTextColor(ContextCompat.getColor(context, R.color.red))
+                }else if (price < yesterdayPrice){
+                    holder.left.setTextColor(ContextCompat.getColor(context, R.color.green))
+                    holder.right.setTextColor(ContextCompat.getColor(context, R.color.green))
+                }else {
+                    holder.left.setTextColor(ContextCompat.getColor(context, R.color.yellow))
+                    holder.right.setTextColor(ContextCompat.getColor(context, R.color.yellow))
+                }
+            }
+            if (qty == null){
+                holder.left.text = "-"
+            }else{
+                holder.left.text = qty.toString()
+            }
+        }else{
+            price = data.best5sellPrice.getOrNull(row)
+            qty = data.best5sellQty.getOrNull(row)
+
+            if (price == null){
+                holder.left.text = "-"
+            }else if (price == 0.0){
+                holder.left.text = "市價"
+                holder.left.setTextColor(ContextCompat.getColor(context, R.color.green))
+                holder.right.setTextColor(ContextCompat.getColor(context, R.color.green))
+            }else{
+                holder.left.text = price.toString()
+                if (price > yesterdayPrice){
+                    holder.left.setTextColor(ContextCompat.getColor(context, R.color.red))
+                    holder.right.setTextColor(ContextCompat.getColor(context, R.color.red))
+                }else if (price < yesterdayPrice){
+                    holder.left.setTextColor(ContextCompat.getColor(context, R.color.green))
+                    holder.right.setTextColor(ContextCompat.getColor(context, R.color.green))
+                }else {
+                    holder.left.setTextColor(ContextCompat.getColor(context, R.color.yellow))
+                    holder.right.setTextColor(ContextCompat.getColor(context, R.color.yellow))
+                }
+            }
+            if (qty == null){
+                holder.right.text = "-"
+            }else{
+                holder.right.text = qty.toString()
+            }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        val column = position % 4
-        return if(column <= 1) 0 else 1
+        return position % 2
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        val left: TextView = itemView.findViewById(R.id.brst5_left)
+        val right: TextView = itemView.findViewById(R.id.brst5_right)
+    }
 }
