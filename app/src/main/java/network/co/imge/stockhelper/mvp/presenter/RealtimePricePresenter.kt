@@ -1,6 +1,10 @@
 package network.co.imge.stockhelper.mvp.presenter
 
+import android.content.Context
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import network.co.imge.stockhelper.base.BasePresenter
 import network.co.imge.stockhelper.data.MyData
@@ -18,7 +22,8 @@ class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePrice
 
     override fun attachView(mvpView: RealtimePriceContract.IRealtimePriceView) {
         super.attachView(mvpView)
-        mvpModel = RealtimePriceModel((mvpView as Fragment).context!!)
+        val context = (mvpView as Fragment).context!!
+        mvpModel = RealtimePriceModel(context)
     }
 
     override fun detachView() {
@@ -78,17 +83,16 @@ class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePrice
     }
 
     private fun goal(stockId: String, price: Double){
+        val msg = "$stockId 以達目標價 $price"
         if (goalMap.containsKey(stockId)){
             val goal = goalMap[stockId]
             if (goal != price){
                 goalMap[stockId] = price
-                //TODO: vibrate
-                Log.d(TAG, stockId + "update")
+                mvpView?.stockGoal(msg)
             }
         }else{
             goalMap[stockId] = price
-            //TODO: vibrate
-            Log.d(TAG, stockId + "add")
+            mvpView?.stockGoal(msg)
         }
     }
 }

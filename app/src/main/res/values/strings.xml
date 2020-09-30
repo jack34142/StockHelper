@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">StockHelper</string>
 
+    <string name="notification_notice">提醒通知</string>
     <string name="add">新增</string>
     <string name="stock_id">股票代號</string>
     <string name="tse">上市</string>

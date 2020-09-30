@@ -1,12 +1,12 @@
 package network.co.imge.stockhelper.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import network.co.imge.stockhelper.R
@@ -14,6 +14,7 @@ import network.co.imge.stockhelper.base.BaseFragment
 import network.co.imge.stockhelper.mvp.contract.RealtimePriceContract
 import network.co.imge.stockhelper.mvp.presenter.RealtimePricePresenter
 import network.co.imge.stockhelper.pojo.TwseResponse
+import network.co.imge.stockhelper.ui.activity.GoalActivity
 import network.co.imge.stockhelper.ui.adapter.receclerView.RealtimePriceListAdapter
 
 class RealtimePriceFragment : BaseFragment(), RealtimePriceContract.IRealtimePriceView {
@@ -47,6 +48,11 @@ class RealtimePriceFragment : BaseFragment(), RealtimePriceContract.IRealtimePri
         super.onDestroy()
     }
 
+    override fun dispose() {
+        super.dispose()
+        handler?.removeCallbacksAndMessages(null)
+    }
+
     private fun initView(v: View){
         realtimePriceList = v.findViewById(R.id.realtimePrice_list)
 
@@ -68,5 +74,11 @@ class RealtimePriceFragment : BaseFragment(), RealtimePriceContract.IRealtimePri
         handler?.postDelayed({
             presenter?.getRealtimePrice()
         }, 5000)
+    }
+
+    override fun stockGoal(msg: String) {
+        val intent = Intent(context, GoalActivity::class.java)
+        intent.putExtra("msg", msg)
+        startActivity(intent)
     }
 }

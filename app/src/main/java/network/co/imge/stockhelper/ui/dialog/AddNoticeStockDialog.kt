@@ -68,15 +68,18 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
 
     private fun initData(stock: NoticeStock) {
         eText_stockId.setText(stock.stockId)
+        eText_stockId.isEnabled = false
+
         when(stock.type){
             "tse" -> rGroup_type.check(R.id.addNoticeStock_tse)
             "otc" -> rGroup_type.check(R.id.addNoticeStock_otc)
         }
 
-        val price = stock.price!!
+        var price = stock.price!!
         if(price > 0){
             rGroup_method.check(R.id.addNoticeStock_lower)
         }else{
+            price = -price
             rGroup_method.check(R.id.addNoticeStock_higher)
         }
         eText_price.setText(price.toString())
