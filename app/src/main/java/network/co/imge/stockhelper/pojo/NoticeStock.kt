@@ -4,5 +4,6 @@ data class NoticeStock (
 	var id: Long? = null,
 	var stockId : String? = null,
 	var type : String? = null,
-	var price : Double? = null
+	var priceFrom : Double? = null,
+	var priceTo : Double? = null
 )

@@ -28,11 +28,8 @@ class NoticeStockListAdapter(val stocks: List<NoticeStock>,
         holder.text_stockId.text = stock.stockId
         holder.text_type.text = stock.type
 
-        val price = stock.price!!
-        if (price > 0)
-            holder.text_price.text = "<" + price.toString()
-        else
-            holder.text_price.text = price.toString().replace("-", ">")
+        holder.text_priceFrom.text = stock.priceFrom.toString()
+        holder.text_priceTo.text = stock.priceTo.toString()
 
         holder.itemView.setOnClickListener{
             onEdit(position, stock)
@@ -45,7 +42,8 @@ class NoticeStockListAdapter(val stocks: List<NoticeStock>,
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val text_stockId: TextView = itemView.findViewById(R.id.noticeStock_stockId)
         val text_type: TextView = itemView.findViewById(R.id.noticeStock_type)
-        val text_price: TextView = itemView.findViewById(R.id.noticeStock_price)
+        val text_priceFrom: TextView = itemView.findViewById(R.id.noticeStock_priceFrom)
+        val text_priceTo: TextView = itemView.findViewById(R.id.noticeStock_priceTo)
         val iBtn_delete: ImageButton = itemView.findViewById(R.id.noticeStock_delete)
     }
 }

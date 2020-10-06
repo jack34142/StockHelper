@@ -1,10 +1,5 @@
 package network.co.imge.stockhelper.mvp.presenter
 
-import android.content.Context
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import network.co.imge.stockhelper.base.BasePresenter
 import network.co.imge.stockhelper.data.MyData
@@ -12,13 +7,14 @@ import network.co.imge.stockhelper.mvp.contract.RealtimePriceContract
 import network.co.imge.stockhelper.mvp.model.RealtimePriceModel
 import network.co.imge.stockhelper.pojo.Aim
 import network.co.imge.stockhelper.pojo.TwseResponse
+import java.util.*
 
 class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePriceView>(), RealtimePriceContract.IRealtimePricePresenter {
     private val TAG: String = "RealtimePricePresenter"
 
     private var mvpModel: RealtimePriceModel? = null
     val latestPrice: MutableMap<String, Double> = mutableMapOf()
-    val goalMap: MutableMap<String, Double> = mutableMapOf()
+    val goalTime: MutableMap<String, Long> = mutableMapOf()
 
     override fun attachView(mvpView: RealtimePriceContract.IRealtimePriceView) {
         super.attachView(mvpView)
@@ -35,6 +31,7 @@ class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePrice
     override fun getRealtimePrice() {
         mvpModel!!.getRealtimePrice(){
             val datas = mutableListOf<TwseResponse>()
+            val goals = mutableListOf<TwseResponse>()
 
             it.forEach{
                 val stockId = it.stockId
@@ -47,52 +44,37 @@ class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePrice
                     latestPrice[stockId] = nowPrice
                 }
 
-                if (nowPrice != null){
-                    MyData.noticeStocks.filter {
-                        it.stockId == stockId
-                    }[0].run {
-                        val aimPrice = price!!
-                        if (aimPrice > 0) {
-                            it.aim = Aim(1, aimPrice)
-
-                            if (nowPrice <= aimPrice)
-                                goal(stockId, aimPrice)
-                        }else{
-                            it.aim = Aim(-1, -aimPrice)
-
-                            if (nowPrice >= -aimPrice)
-                                goal(stockId, aimPrice)
-                        }
+                MyData.noticeStocks.filter {
+                    it.stockId == stockId
+                }[0].run {
+                    it.aim = Aim(priceFrom!!, priceTo!!)
+                    if (nowPrice != null && priceFrom!! < nowPrice && nowPrice < priceTo!!){
+                        goals.add(it)
+                        goal(stockId, priceFrom!!, priceTo!!)
+                    }else {
+                        datas.add(it)
                     }
                 }
-                datas.add(it)
-            }
-            datas.sortBy {
-                val nowPrice = it.nowPrice
-                if (nowPrice != null) {
-                    (nowPrice / it.aim!!.aimPrice - 1) * it.aim!!.method
-                }else{
-                    100.0
-                }
             }
 
-            mvpView?.getRealtimePriceCallback(datas)
+            mvpView?.getRealtimePriceCallback(datas, goals)
         }.let {
             disposables?.add(it)
         }
     }
 
-    private fun goal(stockId: String, price: Double){
-        val msg = "$stockId 以達目標價 $price"
-        if (goalMap.containsKey(stockId)){
-            val goal = goalMap[stockId]
-            if (goal != price){
-                goalMap[stockId] = price
+    private fun goal(stockId: String, from: Double, to: Double){
+        val now = Date().time
+        val msg = "$stockId 達目標價 $from ~ $to"
+
+        if (goalTime.containsKey(stockId)){
+            val time = goalTime[stockId]!!
+            if (now - time > 5 * 60 * 1000){
                 mvpView?.stockGoal(msg)
             }
         }else{
-            goalMap[stockId] = price
             mvpView?.stockGoal(msg)
         }
+        goalTime[stockId] = now
     }
 }

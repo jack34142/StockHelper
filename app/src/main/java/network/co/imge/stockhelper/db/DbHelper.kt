@@ -5,13 +5,16 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import network.co.imge.stockhelper.http.HttpClient
 
-class DbHelper(context:Context): SQLiteOpenHelper(context, "my.db", null, 4) {
+class DbHelper(context:Context): SQLiteOpenHelper(context, "my.db", null, 5) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(NoticeStockDAO.getCreateString())
     }
 
-    override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
-        TODO("Not yet implemented")
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        if (oldVersion < 5){
+            db?.execSQL("DROP TABLE IF EXISTS " + NoticeStockDAO.TABLE_NAME)
+            db?.execSQL(NoticeStockDAO.getCreateString())
+        }
     }
 }

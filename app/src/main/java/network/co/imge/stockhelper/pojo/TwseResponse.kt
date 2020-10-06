@@ -19,6 +19,6 @@ data class TwseResponse (
 )
 
 data class Aim (
-	val method : Int,
-	val aimPrice : Double
+	val from : Double,
+	val to : Double
 )

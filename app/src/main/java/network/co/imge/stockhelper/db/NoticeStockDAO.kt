@@ -17,14 +17,16 @@ class NoticeStockDAO(context: Context) {
         val PRIMARY_KEY = "id"
         val COL_STOCK_ID = "stock_id"
         val COL_TYPE = "type"
-        val COL_PRICE = "price"
+        val COL_PRICE_FROM = "price_from"
+        val COL_PRICE_TO = "price_to"
 
         fun getCreateString(): String{
             return "CREATE TABLE if not exists $TABLE_NAME(" +
                     "$PRIMARY_KEY integer PRIMARY KEY autoincrement," +
                     "$COL_STOCK_ID text, " +
                     "$COL_TYPE text, " +
-                    "$COL_PRICE REAL)"
+                    "$COL_PRICE_FROM REAL, " +
+                    "$COL_PRICE_TO REAL)"
         }
     }
 
@@ -32,7 +34,8 @@ class NoticeStockDAO(context: Context) {
         val values = ContentValues().apply {
             put(COL_STOCK_ID, stock.stockId)
             put(COL_TYPE, stock.type)
-            put(COL_PRICE, stock.price)
+            put(COL_PRICE_FROM, stock.priceFrom)
+            put(COL_PRICE_TO, stock.priceTo)
         }
         val id = db!!.insert(TABLE_NAME, null, values)
         stock.id = id
@@ -43,7 +46,8 @@ class NoticeStockDAO(context: Context) {
         val values = ContentValues().apply {
             put(COL_STOCK_ID, stock.stockId)
             put(COL_TYPE, stock.type)
-            put(COL_PRICE, stock.price)
+            put(COL_PRICE_FROM, stock.priceFrom)
+            put(COL_PRICE_TO, stock.priceTo)
         }
         db?.update(TABLE_NAME, values,"$PRIMARY_KEY = ?", arrayOf(stock.id.toString()))
     }
@@ -60,7 +64,8 @@ class NoticeStockDAO(context: Context) {
                         getLong(getColumnIndex(PRIMARY_KEY)),
                         getString(getColumnIndex(COL_STOCK_ID)),
                         getString(getColumnIndex(COL_TYPE)),
-                        getDouble(getColumnIndex(COL_PRICE))
+                        getDouble(getColumnIndex(COL_PRICE_FROM)),
+                        getDouble(getColumnIndex(COL_PRICE_TO))
                     ))
                 }
             }

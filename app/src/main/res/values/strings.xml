@@ -2,6 +2,7 @@
     <string name="app_name">StockHelper</string>
 
     <string name="notification_notice">提醒通知</string>
+    <string name="notification_running">運行通知</string>
     <string name="add">新增</string>
     <string name="stock_id">股票代號</string>
     <string name="tse">上市</string>
@@ -12,6 +13,7 @@
     <string name="lower">低於</string>
     <string name="higher">高於</string>
     <string name="data_not_complete">資料未完全</string>
+    <string name="running">運行中...</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

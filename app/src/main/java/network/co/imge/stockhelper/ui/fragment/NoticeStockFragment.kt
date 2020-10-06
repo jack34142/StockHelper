@@ -1,12 +1,16 @@
 package network.co.imge.stockhelper.ui.fragment
 
+import android.app.PendingIntent
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,9 +19,10 @@ import network.co.imge.stockhelper.base.BaseFragment
 import network.co.imge.stockhelper.data.MyData
 import network.co.imge.stockhelper.mvp.contract.NoticeStockContract
 import network.co.imge.stockhelper.mvp.presenter.NoticeStockPresenter
-import network.co.imge.stockhelper.pojo.NoticeStock
+import network.co.imge.stockhelper.notification.MyService
 import network.co.imge.stockhelper.ui.adapter.receclerView.NoticeStockListAdapter
 import network.co.imge.stockhelper.ui.dialog.AddNoticeStockDialog
+
 
 /**
  * A simple [Fragment] subclass.

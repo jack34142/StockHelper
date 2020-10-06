@@ -8,7 +8,7 @@ import network.co.imge.stockhelper.pojo.TwseResponse
 
 class RealtimePriceContract {
     interface IRealtimePriceView: IView{
-        fun getRealtimePriceCallback(datas: MutableList<TwseResponse>)
+        fun getRealtimePriceCallback(datas: MutableList<TwseResponse>, goals: MutableList<TwseResponse>)
         fun stockGoal(msg: String)
     }
 

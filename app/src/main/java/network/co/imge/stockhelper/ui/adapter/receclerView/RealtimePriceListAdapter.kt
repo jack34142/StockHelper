@@ -38,16 +38,8 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
         }else{
             var diff = (nowPrice/data.yesterdayPrice - 1) * 100
             holder.text_nowPrice.text = String.format("%.2f (%+.2f%%)", nowPrice, diff)
-
-            val aimPrice = data.aim!!.aimPrice
-            diff = (nowPrice/aimPrice - 1) * 100
-
-            val aimText = String.format("%.2f (%+.2f%%)", aimPrice, diff)
-            when (data.aim!!.method){
-                1 -> holder.text_aimPrice.text = "<" + aimText
-                -1 -> holder.text_aimPrice.text = ">" + aimText
-            }
         }
+        holder.text_aimPrice.text = String.format("%.2f ~ %.2f", data.aim!!.from, data.aim!!.to)
         holder.text_totalQty.text = data.totalQty.toString()
 
         holder.best5grid.layoutManager = object: GridLayoutManager(context, 2){
