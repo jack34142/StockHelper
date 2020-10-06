@@ -1,6 +1,5 @@
 package network.co.imge.stockhelper.mvp.presenter
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import network.co.imge.stockhelper.base.BasePresenter
 import network.co.imge.stockhelper.data.MyData

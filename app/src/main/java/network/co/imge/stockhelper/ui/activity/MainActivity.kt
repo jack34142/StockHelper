@@ -38,7 +38,7 @@ class MainActivity : BaseActivity() {
         if (now - backTime < 2000) {
             exitProcess(0)
         }else{
-            Toast.makeText(this, "再次點擊 退出應用", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.exit, Toast.LENGTH_SHORT).show()
             backTime = now
         }
     }

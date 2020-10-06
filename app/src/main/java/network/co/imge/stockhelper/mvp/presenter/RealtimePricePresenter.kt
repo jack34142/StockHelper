@@ -1,20 +1,20 @@
 package network.co.imge.stockhelper.mvp.presenter
 
 import androidx.fragment.app.Fragment
+import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.base.BasePresenter
 import network.co.imge.stockhelper.data.MyData
 import network.co.imge.stockhelper.mvp.contract.RealtimePriceContract
 import network.co.imge.stockhelper.mvp.model.RealtimePriceModel
 import network.co.imge.stockhelper.pojo.Aim
 import network.co.imge.stockhelper.pojo.TwseResponse
-import java.util.*
 
 class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePriceView>(), RealtimePriceContract.IRealtimePricePresenter {
     private val TAG: String = "RealtimePricePresenter"
 
     private var mvpModel: RealtimePriceModel? = null
     val latestPrice: MutableMap<String, Double> = mutableMapOf()
-    val goalTime: MutableMap<String, Long> = mutableMapOf()
+    val goalMsg: MutableMap<String, String> = mutableMapOf()
 
     override fun attachView(mvpView: RealtimePriceContract.IRealtimePriceView) {
         super.attachView(mvpView)
@@ -48,7 +48,7 @@ class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePrice
                     it.stockId == stockId
                 }[0].run {
                     it.aim = Aim(priceFrom!!, priceTo!!)
-                    if (nowPrice != null && priceFrom!! < nowPrice && nowPrice < priceTo!!){
+                    if (nowPrice != null && priceFrom!! <= nowPrice && nowPrice <= priceTo!!){
                         goals.add(it)
                         goal(stockId, priceFrom!!, priceTo!!)
                     }else {
@@ -64,17 +64,14 @@ class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePrice
     }
 
     private fun goal(stockId: String, from: Double, to: Double){
-        val now = Date().time
-        val msg = "$stockId 達目標價 $from ~ $to"
+        val context = (mvpView as Fragment).context!!
 
-        if (goalTime.containsKey(stockId)){
-            val time = goalTime[stockId]!!
-            if (now - time > 5 * 60 * 1000){
-                mvpView?.stockGoal(msg)
-            }
-        }else{
-            mvpView?.stockGoal(msg)
+        val msg = context.getString(R.string.goal, stockId, from, to)
+        if (goalMsg.containsKey(stockId) && goalMsg[stockId] == msg){
+            return
         }
-        goalTime[stockId] = now
+
+        goalMsg[stockId] = msg
+        mvpView?.stockGoal(msg)
     }
 }

@@ -1,11 +1,9 @@
 package network.co.imge.stockhelper.mvp.contract
 
-import io.reactivex.disposables.Disposable
 import network.co.imge.stockhelper.base.IModel
 import network.co.imge.stockhelper.base.IPresenter
 import network.co.imge.stockhelper.base.IView
 import network.co.imge.stockhelper.pojo.NoticeStock
-import network.co.imge.stockhelper.pojo.TwseResponse
 
 class NoticeStockContract {
     interface INoticeStockView: IView{

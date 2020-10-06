@@ -41,7 +41,7 @@ class Best5gridAdapter(val data: TwseResponse): RecyclerView.Adapter<Best5gridAd
             if (price == null){
                 holder.right.text = "-"
             }else if (price == 0.0){
-                holder.right.text = "市價"
+                holder.right.text = context.getString(R.string.at_the_market)
                 holder.left.setTextColor(ContextCompat.getColor(context, R.color.red))
                 holder.right.setTextColor(ContextCompat.getColor(context, R.color.red))
             }else{
@@ -69,7 +69,7 @@ class Best5gridAdapter(val data: TwseResponse): RecyclerView.Adapter<Best5gridAd
             if (price == null){
                 holder.left.text = "-"
             }else if (price == 0.0){
-                holder.left.text = "市價"
+                holder.left.text = context.getString(R.string.at_the_market)
                 holder.left.setTextColor(ContextCompat.getColor(context, R.color.green))
                 holder.right.setTextColor(ContextCompat.getColor(context, R.color.green))
             }else{
