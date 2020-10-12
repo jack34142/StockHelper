@@ -33,31 +33,40 @@ class RealtimePricePresenter: BasePresenter<RealtimePriceContract.IRealtimePrice
             val datas = mutableListOf<TwseResponse>()
             val goals = mutableListOf<TwseResponse>()
 
-            it.forEach{
-                val stockId = it.stockId
+            if (it.code > 0){
+                it.data?.forEach{
+                    val stockId = it.stockId
 
-                var nowPrice = it.nowPrice
-                if (nowPrice == null) {
-                    nowPrice = latestPrice[stockId]
-                    it.nowPrice = nowPrice
-                }else{
-                    latestPrice[stockId] = nowPrice
-                }
+                    var nowPrice = it.nowPrice
+                    if (nowPrice == null) {
+                        nowPrice = latestPrice[stockId]
+                        it.nowPrice = nowPrice
+                    }else{
+                        latestPrice[stockId] = nowPrice
+                    }
 
-                MyData.noticeStocks.filter {
-                    it.stockId == stockId
-                }[0].run {
-                    it.aim = Aim(priceFrom!!, priceTo!!)
-                    if (nowPrice != null && priceFrom!! <= nowPrice && nowPrice <= priceTo!!){
-                        goals.add(it)
-                        goal(stockId, priceFrom!!, priceTo!!)
-                    }else {
-                        datas.add(it)
+                    MyData.noticeStocks.filter {
+                        it.stockId == stockId
+                    }[0].run {
+                        it.aim = Aim(priceFrom!!, priceTo!!)
+                        if (nowPrice != null && priceFrom!! <= nowPrice && nowPrice <= priceTo!!){
+                            goals.add(it)
+                            goal(stockId, priceFrom!!, priceTo!!)
+                        }else {
+                            datas.add(it)
+                        }
                     }
                 }
             }
-
             mvpView?.getRealtimePriceCallback(datas, goals)
+        }.let {
+            disposables?.add(it)
+        }
+    }
+
+    override fun getTaiex() {
+        mvpModel!!.getTaiex{
+            mvpView?.getTaiexCallback(it.data)
         }.let {
             disposables?.add(it)
         }

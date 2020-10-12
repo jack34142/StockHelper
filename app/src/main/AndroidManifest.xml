@@ -16,9 +16,6 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ui.activity.GoalActivity"
-            android:launchMode="singleTop" />
-        <activity
             android:name=".ui.activity.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
@@ -27,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.GoalActivity"/>
 
         <service
             android:name=".notification.MyService"

@@ -42,6 +42,10 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
         holder.text_aimPrice.text = String.format("%.2f ~ %.2f", data.aim!!.from, data.aim!!.to)
         holder.text_totalQty.text = data.totalQty.toString()
 
+        holder.text_low.text = data.lowPrice.toString()
+        holder.text_yesterday.text = data.yesterdayPrice.toString()
+        holder.text_high.text = data.highPrice.toString()
+
         holder.best5grid.layoutManager = object: GridLayoutManager(context, 2){
             override fun canScrollVertically(): Boolean {
                 return false
@@ -56,6 +60,9 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
         val text_nowPrice: TextView = itemView.findViewById(R.id.realtimePrice_nowPrice)
         val text_aimPrice: TextView = itemView.findViewById(R.id.realtimePrice_aimPrice)
         val text_totalQty: TextView = itemView.findViewById(R.id.realtimePrice_totalQty)
+        val text_low: TextView = itemView.findViewById(R.id.realtimePrice_low)
+        val text_yesterday: TextView = itemView.findViewById(R.id.realtimePrice_yesterdayPrice)
+        val text_high: TextView = itemView.findViewById(R.id.realtimePrice_high)
         val best5grid: RecyclerView = itemView.findViewById(R.id.realtimePrice_best5grid)
         val foreView: View = itemView.findViewById(R.id.realtimePrice_foreView)
 

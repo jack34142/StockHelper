@@ -7,7 +7,9 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import network.co.imge.stockhelper.data.MyData
+import network.co.imge.stockhelper.pojo.MyResponse
 import network.co.imge.stockhelper.pojo.NoticeStock
+import network.co.imge.stockhelper.pojo.TaiexBean
 import network.co.imge.stockhelper.pojo.TwseResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -56,7 +58,8 @@ class HttpClient private constructor(){
             .hostnameVerifier(object : HostnameVerifier{
                 override fun verify(host: String?, session: SSLSession?): Boolean {
                     val dns = listOf(
-                        "mis.twse.com.tw"
+                        "mis.twse.com.tw",
+                        "ws.api.cnyes.com"
                     )
                     return dns.contains(host)
                 }
@@ -74,31 +77,7 @@ class HttpClient private constructor(){
         service = retrofit.create(ApiService::class.java)
     }
 
-    private fun getSSLFactory(): SSLSocketFactory {
-        //證書忽略添加下面代碼（1）打開即可
-//         Create a trust manager that does not validate certificate chains
-        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-            override fun getAcceptedIssuers(): Array<X509Certificate> {
-                return arrayOf()
-            }
-
-            @Throws(CertificateException::class)
-            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
-            }
-
-            @Throws(CertificateException::class)
-            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-            }
-        })
-
-        // Install the all-trusting trust manager
-        val sslContext = SSLContext.getInstance("SSL")
-        sslContext.init(null, trustAllCerts, java.security.SecureRandom())
-        // Create an ssl socket factory with our all-trusting manager
-        return sslContext.socketFactory
-    }
-
-    fun getRealtimePrice(stocks: List<NoticeStock>, onSuccess: (List<TwseResponse>) -> Unit): Disposable {
+    fun getRealtimePrice(stocks: List<NoticeStock>, onResponse: (MyResponse<List<TwseResponse>>) -> Unit): Disposable {
         val q = stocks.map {
             it.type + "_" + it.stockId + ".tw"
         }.toSet().joinToString(separator = "|")
@@ -113,30 +92,68 @@ class HttpClient private constructor(){
                     val datas = mutableListOf<TwseResponse>()
 
                     val json = JSONObject(it.string())
-                    val msgArray = json.getJSONArray("msgArray")
+                    val rtmessage = json.getString("rtmessage")
 
-                    val len = msgArray.length()
-                    for (i in 0 until len){
-                        val msg = msgArray.getJSONObject(i)
-                        val twseResponse = TwseResponse(
-                            stockId = msg.getString("c"),
-                            stockName = msg.getString("n"),
-                            best5purchaseQty = msg.getString("g").split("_").map { it.toIntOrNull() }.filterNotNull(),
-                            best5purchasePrice = msg.getString("b").split("_").map { it.toDoubleOrNull() }.filterNotNull(),
-                            best5sellPrice = msg.getString("a").split("_").map { it.toDoubleOrNull() }.filterNotNull(),
-                            best5sellQty = msg.getString("f").split("_").map { it.toIntOrNull() }.filterNotNull(),
-                            openPrice = msg.getDouble("o"),
-                            highPrice = msg.getDouble("h"),
-                            lowPrice = msg.getDouble("l"),
-                            yesterdayPrice = msg.getDouble("y"),
-                            nowPrice = msg.getString("z").toDoubleOrNull(),
-                            nowQty = msg.getString("s").toIntOrNull(),
-                            totalQty = msg.getInt("v"),
-                            type = msg.getString("ex")
-                        )
-                        datas.add(twseResponse)
+                    if(json.getString("rtcode") == "0000"){
+                        val msgArray = json.getJSONArray("msgArray")
+                        val len = msgArray.length()
+                        for (i in 0 until len){
+                            val msg = msgArray.getJSONObject(i)
+                            val twseResponse = TwseResponse(
+                                stockId = msg.getString("c"),
+                                stockName = msg.getString("n"),
+                                best5purchaseQty = msg.getString("g").split("_").map { it.toIntOrNull() }.filterNotNull(),
+                                best5purchasePrice = msg.getString("b").split("_").map { it.toDoubleOrNull() }.filterNotNull(),
+                                best5sellPrice = msg.getString("a").split("_").map { it.toDoubleOrNull() }.filterNotNull(),
+                                best5sellQty = msg.getString("f").split("_").map { it.toIntOrNull() }.filterNotNull(),
+                                openPrice = msg.getDouble("o"),
+                                highPrice = msg.getDouble("h"),
+                                lowPrice = msg.getDouble("l"),
+                                yesterdayPrice = msg.getDouble("y"),
+                                nowPrice = msg.getString("z").toDoubleOrNull(),
+                                nowQty = msg.getString("s").toIntOrNull(),
+                                totalQty = msg.getInt("v"),
+                                type = msg.getString("ex")
+                            )
+                            datas.add(twseResponse)
+                        }
+                        onResponse(MyResponse(1, rtmessage, datas))
+                    }else{
+                        onResponse(MyResponse(-1, rtmessage))
                     }
-                    onSuccess(datas)
+                },
+                onError = onError
+            )
+    }
+
+    fun getTaiex(onResponse: (MyResponse<TaiexBean>) -> Unit): Disposable{
+        return service.getTaiex(Date().time)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+//            .repeatWhen{ it.delay(5, TimeUnit.SECONDS) }
+            .retryWhen{ it.delay(5, TimeUnit.SECONDS) }
+            .subscribeBy(
+                onNext = {
+                    val json = JSONObject(it.string())
+                    val rtmessage = json.getString("rtmessage")
+
+                    if(json.getString("rtcode") == "0000"){
+                        val infoArray = json.getJSONArray("infoArray").getJSONObject(0)
+                        val staticObj = json.getJSONObject("staticObj")
+                        val taiex = TaiexBean(
+                            infoArray.getString("n"),
+                            infoArray.getDouble("z"),
+                            infoArray.getDouble("o"),
+                            infoArray.getDouble("h"),
+                            infoArray.getDouble("l"),
+                            infoArray.getDouble("y"),
+                            infoArray.getInt("v")/100.0,
+                            staticObj.getInt("tv")
+                        )
+                        onResponse(MyResponse(1, rtmessage, taiex))
+                    }else{
+                        onResponse(MyResponse(-1, rtmessage))
+                    }
                 },
                 onError = onError
             )

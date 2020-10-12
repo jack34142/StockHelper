@@ -18,6 +18,7 @@
     <string name="exit">再次點擊 退出應用</string>
     <string name="at_the_market">市價</string>
     <string name="exist">%1$s 已經存在</string>
+    <string name="update_time">最後更新時間 %1$s</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
