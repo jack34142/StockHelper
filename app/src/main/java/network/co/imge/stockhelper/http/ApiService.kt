@@ -13,4 +13,7 @@ interface ApiService {
 
     @GET("https://mis.twse.com.tw/stock/data/mis_ohlc_TSE.txt")
     fun getTaiex(@Query("_") timestamp: Long): Observable<ResponseBody>
+
+    @GET("http://mopsfin.twse.com.tw/opendata/t187ap03_L.csv")
+    fun getTseList(): Observable<ResponseBody>
 }

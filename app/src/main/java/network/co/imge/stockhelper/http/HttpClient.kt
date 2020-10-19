@@ -59,7 +59,7 @@ class HttpClient private constructor(){
                 override fun verify(host: String?, session: SSLSession?): Boolean {
                     val dns = listOf(
                         "mis.twse.com.tw",
-                        "ws.api.cnyes.com"
+                        "mopsfin.twse.com.tw"
                     )
                     return dns.contains(host)
                 }
@@ -154,6 +154,20 @@ class HttpClient private constructor(){
                     }else{
                         onResponse(MyResponse(-1, rtmessage))
                     }
+                },
+                onError = onError
+            )
+    }
+
+    fun getTseList(onResponse: (MyResponse<TaiexBean>) -> Unit): Disposable{
+        return service.getTseList()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+//            .repeatWhen{ it.delay(5, TimeUnit.SECONDS) }
+//            .retryWhen{ it.delay(5, TimeUnit.SECONDS) }
+            .subscribeBy(
+                onNext = {
+
                 },
                 onError = onError
             )
