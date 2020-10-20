@@ -23,10 +23,11 @@ class NoticeStockDAO(context: Context) {
         fun getCreateString(): String{
             return "CREATE TABLE if not exists $TABLE_NAME(" +
                     "$PRIMARY_KEY integer PRIMARY KEY autoincrement," +
-                    "$COL_STOCK_ID text, " +
-                    "$COL_TYPE text, " +
-                    "$COL_PRICE_FROM REAL, " +
-                    "$COL_PRICE_TO REAL)"
+                    "$COL_STOCK_ID text not null, " +
+                    "$COL_TYPE text not null, " +
+                    "$COL_PRICE_FROM REAL not null, " +
+                    "$COL_PRICE_TO REAL not null," +
+                    "UNIQUE($COL_STOCK_ID))"
         }
     }
 
@@ -56,13 +57,14 @@ class NoticeStockDAO(context: Context) {
         db?.delete(TABLE_NAME, "$PRIMARY_KEY = ?", arrayOf(id.toString()))
     }
 
-    fun getAll(): List<NoticeStock>{
+    fun getAll(): Map<String, NoticeStock>{
         return db!!.query(TABLE_NAME, null, null, null, null, null, null).run {
-            mutableListOf<NoticeStock>().apply {
+            mutableMapOf<String, NoticeStock>().apply {
                 while (moveToNext()){
-                    add(NoticeStock(
+                    val stockId = getString(getColumnIndex(COL_STOCK_ID))
+                    put(stockId, NoticeStock(
                         getLong(getColumnIndex(PRIMARY_KEY)),
-                        getString(getColumnIndex(COL_STOCK_ID)),
+                        stockId,
                         getString(getColumnIndex(COL_TYPE)),
                         getDouble(getColumnIndex(COL_PRICE_FROM)),
                         getDouble(getColumnIndex(COL_PRICE_TO))

@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.*
+import androidx.core.content.ContextCompat
 import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.pojo.NoticeStock
 
@@ -12,7 +13,6 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
     private val TAG: String = "AddDialog"
 
     private val eText_stockId: EditText
-    private val rGroup_type: RadioGroup
     private val eText_priceFrom: EditText
     private val eText_priceTo: EditText
     private val btn_cancel: Button
@@ -25,7 +25,6 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
         setContentView(v)
 
         eText_stockId = v.findViewById(R.id.addNoticeStock_stockId)
-        rGroup_type = v.findViewById(R.id.addNoticeStock_type)
         eText_priceFrom = v.findViewById(R.id.addNoticeStock_priceFrom)
         eText_priceTo = v.findViewById(R.id.addNoticeStock_priceTo)
         btn_cancel = v.findViewById(R.id.addNoticeStock_cancel)
@@ -43,13 +42,8 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
             val stockId = eText_stockId.text.toString()
             val priceFrom = eText_priceFrom.text.toString()
             val priceTo = eText_priceTo.text.toString()
-            val type = when(rGroup_type.checkedRadioButtonId){
-                R.id.addNoticeStock_tse -> "tse"
-                R.id.addNoticeStock_otc -> "otc"
-                else -> null
-            }
 
-            if (stockId.isEmpty() || type == null || priceFrom.isEmpty() || priceTo.isEmpty()){
+            if (stockId.isEmpty() || priceFrom.isEmpty() || priceTo.isEmpty()){
                 Toast.makeText(context,
                     context.getString(R.string.data_not_complete), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -57,7 +51,6 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
 
             dismiss()
             stock.stockId = stockId
-            stock.type = type
             stock.priceFrom = priceFrom.toDouble()
             stock.priceTo = priceTo.toDouble()
             onComplete(stock)
@@ -67,13 +60,9 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
     private fun initData(stock: NoticeStock) {
         eText_stockId.setText(stock.stockId)
         eText_stockId.isEnabled = false
+        eText_stockId.setTextColor(ContextCompat.getColor(context, R.color.colorDisable))
 
         eText_priceFrom.setText(stock.priceFrom.toString())
         eText_priceTo.setText(stock.priceTo.toString())
-
-        when(stock.type){
-            "tse" -> rGroup_type.check(R.id.addNoticeStock_tse)
-            "otc" -> rGroup_type.check(R.id.addNoticeStock_otc)
-        }
     }
 }

@@ -1,9 +1,7 @@
 package network.co.imge.stockhelper.base
 
-import android.content.Intent
 import androidx.fragment.app.Fragment
-import network.co.imge.stockhelper.ui.activity.GoalActivity
-
+import network.co.imge.stockhelper.ui.dialog.LoadingDialog
 
 abstract class BaseFragment : Fragment(), IView {
     private val TAG: String = "BaseFragment"
@@ -14,4 +12,12 @@ abstract class BaseFragment : Fragment(), IView {
     }
 
     override fun dispose() {}
+
+    override fun showLoading() {
+        LoadingDialog.showLoading(context!!)
+    }
+
+    override fun hideLoading() {
+        LoadingDialog.hideLoading()
+    }
 }

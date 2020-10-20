@@ -12,10 +12,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="13dp"
-            android:paddingEnd="13dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="6dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginEnd="40dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -28,7 +28,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_weight="2">
+                    android:layout_weight="1.9">
 
                     <TextView
                         android:id="@+id/realtimePrice_stockId"
@@ -49,7 +49,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_weight="2">
+                    android:layout_weight="2.2">
 
                     <TextView
                         android:id="@+id/realtimePrice_nowPrice"
@@ -71,9 +71,8 @@
 
                 <TextView
                     android:id="@+id/realtimePrice_totalQty"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
@@ -140,5 +139,16 @@
         android:layout_alignBottom="@+id/realtimePrice_main"
         android:clickable="true"
         android:foreground="?selectableItemBackground"/>
+
+    <ImageButton
+        android:id="@+id/realtimePrice_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="12dp"
+        android:padding="8dp"
+        android:src="@drawable/close"
+        android:foreground="?selectableItemBackground"
+        android:background="@android:color/transparent"/>
 
 </RelativeLayout>

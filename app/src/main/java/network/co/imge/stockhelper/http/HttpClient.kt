@@ -1,12 +1,11 @@
 package network.co.imge.stockhelper.http
 
+import android.util.Log
 import com.google.gson.GsonBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
-import network.co.imge.stockhelper.data.MyData
 import network.co.imge.stockhelper.pojo.MyResponse
 import network.co.imge.stockhelper.pojo.NoticeStock
 import network.co.imge.stockhelper.pojo.TaiexBean
@@ -18,7 +17,6 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.SecureRandom
-import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -50,21 +48,29 @@ class HttpClient private constructor(){
         val sslContext = SSLContext.getInstance("SSL")
         sslContext.init(null, trustAllCerts, SecureRandom())
 
-        val logging = HttpLoggingInterceptor()
+        val logging = HttpLoggingInterceptor(object: HttpLoggingInterceptor.Logger{
+            override fun log(message: String) {
+                var len = message.length
+                if (len > 8192) len = 8192
+                Log.d(TAG, message.substring(0, len))
+            }
+        })
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
+
+        val builder = OkHttpClient.Builder()
+        builder.addInterceptor(logging)
             .sslSocketFactory(sslContext.getSocketFactory(), trustAllCerts[0] as X509TrustManager)
             .hostnameVerifier(object : HostnameVerifier{
                 override fun verify(host: String?, session: SSLSession?): Boolean {
                     val dns = listOf(
                         "mis.twse.com.tw",
-                        "mopsfin.twse.com.tw"
+                        "smart.tdcc.com.tw"
                     )
                     return dns.contains(host)
                 }
             })
-            .build()
+            .connectTimeout(30, TimeUnit.SECONDS)
+        val client = builder.build()
 
         val gson = GsonBuilder().setLenient().create()
         val retrofit = Retrofit.Builder()
@@ -77,12 +83,8 @@ class HttpClient private constructor(){
         service = retrofit.create(ApiService::class.java)
     }
 
-    fun getRealtimePrice(stocks: List<NoticeStock>, onResponse: (MyResponse<List<TwseResponse>>) -> Unit): Disposable {
-        val q = stocks.map {
-            it.type + "_" + it.stockId + ".tw"
-        }.toSet().joinToString(separator = "|")
-
-        return service.getNowPrice(q)
+    fun getRealtimePrice(query: String, onResponse: (MyResponse<List<TwseResponse>>) -> Unit): Disposable {
+        return service.getNowPrice(query)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 //            .repeatWhen{ it.delay(5, TimeUnit.SECONDS) }
@@ -159,15 +161,35 @@ class HttpClient private constructor(){
             )
     }
 
-    fun getTseList(onResponse: (MyResponse<TaiexBean>) -> Unit): Disposable{
-        return service.getTseList()
+    fun getStockType(onResponse: (MyResponse<Map<String, String>>) -> Unit): Disposable{
+        return service.getStockType()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 //            .repeatWhen{ it.delay(5, TimeUnit.SECONDS) }
 //            .retryWhen{ it.delay(5, TimeUnit.SECONDS) }
             .subscribeBy(
                 onNext = {
+                    val typeMap = mutableMapOf<String, String>()
+                    val rows = it.string().split("\n")
+                    val len_rows = rows.size
 
+                    for (i in 1 until len_rows){
+                        val row = rows[i]
+                        val data = row.split(",")
+
+                        try {
+                            val type = data[3].trim()
+                            if (type.isNotEmpty()){
+                                when (type){
+                                    "上市" -> typeMap[data[1]] = "tse"
+                                    "上櫃" -> typeMap[data[1]] = "otc"
+                                }
+                            }
+                        }catch (e: IndexOutOfBoundsException){
+                            Log.e(TAG, "IndexOutOfBoundsException => getStockType csv readline\nline=$i, string = $row")
+                        }
+                    }
+                    onResponse(MyResponse(1, "success", typeMap))
                 },
                 onError = onError
             )

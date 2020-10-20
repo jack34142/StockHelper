@@ -4,13 +4,16 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.pojo.TwseResponse
 
-class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
+class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>,
+                               val onDelete: (TwseResponse) -> Unit,
+                               val onEdit: (TwseResponse) -> Unit):
         RecyclerView.Adapter<RealtimePriceListAdapter.ViewHolder>() {
 
     var context: Context? = null
@@ -52,6 +55,14 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
             }
         }
         holder.best5grid.adapter = Best5gridAdapter(data)
+
+        holder.btn_delete.setOnClickListener{
+            onDelete(data)
+        }
+        holder.foreView.setOnLongClickListener {
+            onEdit(data)
+            false
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener{
@@ -65,6 +76,7 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>):
         val text_high: TextView = itemView.findViewById(R.id.realtimePrice_high)
         val best5grid: RecyclerView = itemView.findViewById(R.id.realtimePrice_best5grid)
         val foreView: View = itemView.findViewById(R.id.realtimePrice_foreView)
+        val btn_delete: ImageButton = itemView.findViewById(R.id.realtimePrice_delete)
 
         init {
             foreView.setOnClickListener(this)

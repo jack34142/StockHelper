@@ -7,7 +7,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="15dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:paddingBottom="5dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -19,6 +22,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:text="@string/stock_id"/>
 
             <EditText
@@ -26,27 +30,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="number"
+                android:backgroundTint="@color/colorDisable"
                 android:layout_weight="1"/>
-
-            <RadioGroup
-                android:id="@+id/addNoticeStock_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/addNoticeStock_tse"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tse"/>
-
-                <RadioButton
-                    android:id="@+id/addNoticeStock_otc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/otc"/>
-
-            </RadioGroup>
 
         </LinearLayout>
 
@@ -59,6 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:text="@string/notice_price"/>
 
             <EditText
@@ -66,6 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
+                android:backgroundTint="@color/colorDisable"
                 android:layout_weight="1"/>
 
             <TextView
@@ -78,6 +65,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
+                android:backgroundTint="@color/colorDisable"
                 android:layout_weight="1"/>
 
         </LinearLayout>
@@ -92,12 +80,20 @@
                 android:id="@+id/addNoticeStock_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:background="@android:color/transparent"
                 android:text="@string/cancel"/>
 
             <Button
                 android:id="@+id/addNoticeStock_complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:background="@android:color/transparent"
                 android:text="@string/complete"/>
 
         </LinearLayout>
