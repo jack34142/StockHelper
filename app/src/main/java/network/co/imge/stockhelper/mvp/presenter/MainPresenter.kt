@@ -2,6 +2,8 @@ package network.co.imge.stockhelper.mvp.presenter
 
 import android.content.Context
 import android.widget.Toast
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.toObservable
 import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.base.BasePresenter
 import network.co.imge.stockhelper.mvp.contract.MainContract
@@ -32,22 +34,23 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
     override fun addNoticeStock(noticeStock: NoticeStock) {
         val context = mvpView as Context
 
-        getStockType{
-            val noticeStockMap = mvpView!!.getNoticeStock()
-            val stockId = noticeStock.stockId!!
-            if (typeMap!!.containsKey(stockId)){
-                noticeStock.type = typeMap!![stockId]
-                noticeStockMap.put(stockId, noticeStock)
-                mvpModel?.addNoticeStock(noticeStock)
-                Toast.makeText(context, "新增成功 下次刷新後顯示", Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(context, "查無代號", Toast.LENGTH_SHORT).show()
-            }
+        val noticeStockMap = mvpView!!.getNoticeStock()
+        val stockId = noticeStock.stockId!!
+        if (typeMap!!.containsKey(stockId)){
+            noticeStock.type = typeMap!![stockId]
+            noticeStockMap.put(stockId, noticeStock)
+            mvpModel?.addNoticeStock(noticeStock)
+            Toast.makeText(context, "新增成功 下次刷新時顯示", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "查無代號", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun updateNoticeStock(noticeStock: NoticeStock) {
         mvpModel?.updateNoticeStock(noticeStock)
+
+        val context = mvpView as Context
+        Toast.makeText(context, "修改成功 下次更新時刷新", Toast.LENGTH_SHORT).show()
     }
 
     override fun deleteNoticeStock(stockId: String): Boolean {
@@ -120,6 +123,25 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
         }
     }
 
+    override fun getStockType(onSuccess: (List<String>) -> Unit) {
+        if (typeMap != null){
+            onSuccess(typeMap!!.keys.toList())
+            return
+        }
+        mvpView?.showLoading()
+        mvpModel!!.getStockType{
+            mvpView?.hideLoading()
+            if (it.code > 0){
+                typeMap = it.data!!
+                onSuccess(typeMap!!.keys.toList())
+            }else{
+                mvpView?.showMsg(it.msg, it.code)
+            }
+        }.let {
+            disposables?.add(it)
+        }
+    }
+
     // -------------------- private function --------------------
     private fun goal(stockId: String, from: Double, to: Double){
         val context = mvpView as Context
@@ -131,22 +153,5 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
 
         goalMsg[stockId] = msg
         mvpView?.stockGoal(msg)
-    }
-
-    private fun getStockType(onSuccess: () -> Unit) {
-        if (typeMap != null){
-            onSuccess()
-            return
-        }
-        mvpView?.showLoading()
-        mvpModel!!.getStockType{
-            mvpView?.hideLoading()
-            if (it.code > 0){
-                typeMap = it.data!!
-                onSuccess()
-            }
-        }.let {
-            disposables?.add(it)
-        }
     }
 }

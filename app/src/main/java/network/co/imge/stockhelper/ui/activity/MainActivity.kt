@@ -93,9 +93,11 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
 
         val onEdit = {twseResponse: TwseResponse ->
             val noticeStock = noticeStockMap[twseResponse.stockId]
-            AddNoticeStockDialog(this, noticeStock){
-                presenter?.updateNoticeStock(it)
-            }.show()
+            AddNoticeStockDialog(this, noticeStock,
+                onComplete = {
+                    presenter?.updateNoticeStock(it)
+                }
+            ).show()
         }
 
         dataAdapter = RealtimePriceListAdapter(datas,
@@ -134,14 +136,20 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
     }
 
     fun showAdd(){
-        AddNoticeStockDialog(this, null){
-            if (noticeStockMap.containsKey(it.stockId)){
-                val msg = getString(R.string.exist, it.stockId)
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-            }else{
-                presenter?.addNoticeStock(it)
-            }
-        }.show()
+        presenter?.getStockType{
+            val addDialog = AddNoticeStockDialog(this, null,
+                onComplete = {
+                    if (noticeStockMap.containsKey(it.stockId)){
+                        val msg = getString(R.string.exist, it.stockId)
+                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                    }else{
+                        presenter?.addNoticeStock(it)
+                    }
+                }
+            )
+            addDialog.setDataList(it)
+            addDialog.show()
+        }
     }
 
     // -------------------- override --------------------

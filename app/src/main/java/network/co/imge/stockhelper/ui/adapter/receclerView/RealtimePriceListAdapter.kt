@@ -39,15 +39,16 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>,
         if (nowPrice == null){
             holder.text_nowPrice.text = "-"
         }else{
-            var diff = (nowPrice/data.yesterdayPrice - 1) * 100
+            val diff = (nowPrice/data.yesterdayPrice - 1) * 100
             holder.text_nowPrice.text = String.format("%.2f (%+.2f%%)", nowPrice, diff)
         }
         holder.text_aimPrice.text = String.format("%.2f ~ %.2f", data.aim!!.from, data.aim!!.to)
         holder.text_totalQty.text = data.totalQty.toString()
 
-        holder.text_low.text = data.lowPrice.toString()
         holder.text_yesterday.text = data.yesterdayPrice.toString()
-        holder.text_high.text = data.highPrice.toString()
+        holder.text_open.text = price2string(data.openPrice)
+        holder.text_low.text = price2string(data.lowPrice)
+        holder.text_high.text = price2string(data.highPrice)
 
         holder.best5grid.layoutManager = object: GridLayoutManager(context, 2){
             override fun canScrollVertically(): Boolean {
@@ -71,8 +72,9 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>,
         val text_nowPrice: TextView = itemView.findViewById(R.id.realtimePrice_nowPrice)
         val text_aimPrice: TextView = itemView.findViewById(R.id.realtimePrice_aimPrice)
         val text_totalQty: TextView = itemView.findViewById(R.id.realtimePrice_totalQty)
-        val text_low: TextView = itemView.findViewById(R.id.realtimePrice_low)
         val text_yesterday: TextView = itemView.findViewById(R.id.realtimePrice_yesterdayPrice)
+        val text_open: TextView = itemView.findViewById(R.id.realtimePrice_openPrice)
+        val text_low: TextView = itemView.findViewById(R.id.realtimePrice_low)
         val text_high: TextView = itemView.findViewById(R.id.realtimePrice_high)
         val best5grid: RecyclerView = itemView.findViewById(R.id.realtimePrice_best5grid)
         val foreView: View = itemView.findViewById(R.id.realtimePrice_foreView)
@@ -88,5 +90,12 @@ class RealtimePriceListAdapter(val datas: MutableList<TwseResponse>,
                 else -> best5grid.visibility = View.VISIBLE
             }
         }
+    }
+
+    fun price2string(price: Double?): String{
+        if (price == null)
+            return "-"
+        else
+            return price.toString()
     }
 }

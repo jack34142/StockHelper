@@ -19,6 +19,8 @@
     <string name="at_the_market">市價</string>
     <string name="exist">%1$s 已經存在</string>
     <string name="update_time">最後更新時間 %1$s</string>
+    <string name="price_range_error">提醒價範圍錯誤</string>
+    <string name="ok">確認</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

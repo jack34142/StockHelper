@@ -24,7 +24,7 @@ class LoadingDialog private constructor(context: Context) : Dialog(context) {
     }
 
     init {
-        val v = LayoutInflater.from(context).inflate(R.layout.loading, null)
+        val v = LayoutInflater.from(context).inflate(R.layout.dialog_loading, null)
         setContentView(v)
 
         window?.setBackgroundDrawableResource(android.R.color.transparent)

@@ -28,6 +28,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:layout_weight="1.9">
 
                     <TextView
@@ -85,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="昨收: "
+                    android:text="昨: "
                     android:textSize="12sp"/>
 
                 <TextView
@@ -98,7 +99,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="最低: "
+                    android:text="開: "
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/realtimePrice_openPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="14dp"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="低: "
                     android:textSize="12sp"/>
 
                 <TextView
@@ -111,7 +125,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="最高: "
+                    android:text="高: "
                     android:textSize="12sp"/>
 
                 <TextView

@@ -25,6 +25,7 @@ class MainContract {
         fun getNoticeStocks()
         fun getRealtimePrice()
         fun getTaiex()
+        fun getStockType(onSuccess: (List<String>) -> Unit)
     }
 
     interface IMainModel: IModel {

@@ -108,9 +108,9 @@ class HttpClient private constructor(){
                                 best5purchasePrice = msg.getString("b").split("_").map { it.toDoubleOrNull() }.filterNotNull(),
                                 best5sellPrice = msg.getString("a").split("_").map { it.toDoubleOrNull() }.filterNotNull(),
                                 best5sellQty = msg.getString("f").split("_").map { it.toIntOrNull() }.filterNotNull(),
-                                openPrice = msg.getDouble("o"),
-                                highPrice = msg.getDouble("h"),
-                                lowPrice = msg.getDouble("l"),
+                                openPrice = if(msg.has("o")) msg.getDouble("o") else null,
+                                highPrice = if(msg.has("h")) msg.getDouble("h") else null,
+                                lowPrice = if(msg.has("l")) msg.getDouble("l") else null,
                                 yesterdayPrice = msg.getDouble("y"),
                                 nowPrice = msg.getString("z").toDoubleOrNull(),
                                 nowQty = msg.getString("s").toIntOrNull(),
@@ -180,6 +180,7 @@ class HttpClient private constructor(){
                         try {
                             val type = data[3].trim()
                             if (type.isNotEmpty()){
+                                val stockName = "${data[1]} ${data[2]}"
                                 when (type){
                                     "上市" -> typeMap[data[1]] = "tse"
                                     "上櫃" -> typeMap[data[1]] = "otc"
@@ -191,7 +192,10 @@ class HttpClient private constructor(){
                     }
                     onResponse(MyResponse(1, "success", typeMap))
                 },
-                onError = onError
+                onError = {
+                    onResponse(MyResponse(-1, it.toString()))
+                    onError(it)
+                }
             )
     }
 
