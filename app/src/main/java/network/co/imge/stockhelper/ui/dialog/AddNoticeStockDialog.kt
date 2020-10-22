@@ -5,6 +5,7 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
 import network.co.imge.stockhelper.R
@@ -20,6 +21,7 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
     private val eText_priceTo: EditText
     private val btn_cancel: Button
     private val btn_commit: Button
+    private val btn_clear: ImageButton
 
     private val stock: NoticeStock = stock ?: NoticeStock()
 
@@ -32,6 +34,7 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
         eText_priceTo = v.findViewById(R.id.addNoticeStock_priceTo)
         btn_cancel = v.findViewById(R.id.addNoticeStock_cancel)
         btn_commit = v.findViewById(R.id.addNoticeStock_complete)
+        btn_clear = v.findViewById(R.id.addNoticeStock_clear)
 
         if (stock != null) initData(stock)
         initListener()
@@ -45,6 +48,9 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
                 stock.type = null
             }
         })
+        btn_clear.setOnClickListener {
+            eText_stockId.text.clear()
+        }
         btn_cancel.setOnClickListener{
             dismiss()
         }
@@ -92,6 +98,8 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
 
         eText_priceFrom.setText(stock.priceFrom.toString())
         eText_priceTo.setText(stock.priceTo.toString())
+
+        btn_clear.visibility = ViewGroup.GONE
     }
 
     fun setDataList(typeMap: Map<String, String>){
