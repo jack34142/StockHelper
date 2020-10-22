@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -92,7 +93,7 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
         }
 
         val onEdit = {twseResponse: TwseResponse ->
-            val noticeStock = noticeStockMap[twseResponse.stockId]
+            val noticeStock = noticeStockMap[twseResponse.stockId]!!
             AddNoticeStockDialog(this, noticeStock,
                 onComplete = {
                     presenter?.updateNoticeStock(it)

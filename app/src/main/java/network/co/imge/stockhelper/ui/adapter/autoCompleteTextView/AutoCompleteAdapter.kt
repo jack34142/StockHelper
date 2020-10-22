@@ -1,7 +1,6 @@
 package network.co.imge.stockhelper.ui.adapter.autoCompleteTextView
 
 import android.content.Context
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.Filterable
@@ -21,10 +20,20 @@ class AutoCompleteAdapter(
             if (constraint != null){
                 val suggestions = mutableListOf<String>()
                 originDatas.forEach {
-                    if (it.startsWith(constraint)){
-                        suggestions.add(0, it)
-                    }else if(it.contains(constraint)){
-                        suggestions.add(it)
+                    if(it.contains(constraint)){
+                        val ary = it.split(" ")
+
+                        var isAdd = false
+                        val len = ary.size
+                        for (i in 0 until len){
+                            if (ary[i].startsWith(constraint)){
+                                suggestions.add(0, it)
+                                isAdd = true
+                                break
+                            }
+                        }
+                        if (!isAdd)
+                            suggestions.add(it)
                     }
                 }
                 filterResults.values = suggestions

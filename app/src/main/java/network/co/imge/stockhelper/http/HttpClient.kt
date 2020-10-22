@@ -182,8 +182,8 @@ class HttpClient private constructor(){
                             if (type.isNotEmpty()){
                                 val stockName = "${data[1]} ${data[2]}"
                                 when (type){
-                                    "上市" -> typeMap[data[1]] = "tse"
-                                    "上櫃" -> typeMap[data[1]] = "otc"
+                                    "上市" -> typeMap[stockName] = "tse"
+                                    "上櫃" -> typeMap[stockName] = "otc"
                                 }
                             }
                         }catch (e: IndexOutOfBoundsException){

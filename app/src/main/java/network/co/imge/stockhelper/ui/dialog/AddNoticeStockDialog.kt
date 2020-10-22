@@ -2,7 +2,8 @@ package network.co.imge.stockhelper.ui.dialog
 
 import android.app.Dialog
 import android.content.Context
-import android.text.InputFilter
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.widget.*
 import androidx.core.content.ContextCompat
@@ -32,11 +33,18 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
         btn_cancel = v.findViewById(R.id.addNoticeStock_cancel)
         btn_commit = v.findViewById(R.id.addNoticeStock_complete)
 
-        initListener()
         if (stock != null) initData(stock)
+        initListener()
     }
 
     private fun initListener(){
+        eText_stockId.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                stock.type = null
+            }
+        })
         btn_cancel.setOnClickListener{
             dismiss()
         }
@@ -63,9 +71,12 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
                 if (priceFrom > priceTo){
                     Toast.makeText(context,
                         context.getString(R.string.price_range_error), Toast.LENGTH_SHORT).show()
+                }else if(stock.type == null){
+                    Toast.makeText(context,
+                        "無效的代號", Toast.LENGTH_SHORT).show()
                 }else{
                     dismiss()
-                    stock.stockId = stockId
+                    stock.stockId = stockId.split(" ")[0]
                     stock.priceFrom = priceFrom
                     stock.priceTo = priceTo
                     onComplete(stock)
@@ -83,8 +94,23 @@ class AddNoticeStockDialog(context: Context, stock: NoticeStock?,
         eText_priceTo.setText(stock.priceTo.toString())
     }
 
-    fun setDataList(list: List<String>){
+    fun setDataList(typeMap: Map<String, String>){
         eText_stockId.threshold = 1
-        eText_stockId.setAdapter(AutoCompleteAdapter(context, android.R.layout.simple_spinner_dropdown_item, list))
+        val adapter = AutoCompleteAdapter(context, android.R.layout.simple_spinner_dropdown_item, typeMap.keys.toList())
+        eText_stockId.setAdapter(adapter)
+
+        eText_stockId.setOnItemClickListener { adapterView, view, i, l ->
+            stock.type = typeMap[eText_stockId.text.toString()]
+        }
+
+        eText_stockId.setOnDismissListener {
+            if (stock.type == null && eText_stockId.text.isNotEmpty() && adapter.count > 0){
+                eText_stockId.setAdapter(null)
+                eText_stockId.setText(adapter.getItem(0))
+                eText_stockId.setAdapter(adapter)
+
+                stock.type = typeMap[eText_stockId.text.toString()]
+            }
+        }
     }
 }

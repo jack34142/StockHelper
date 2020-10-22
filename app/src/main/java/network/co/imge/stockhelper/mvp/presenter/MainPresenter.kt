@@ -32,18 +32,13 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
     }
 
     override fun addNoticeStock(noticeStock: NoticeStock) {
-        val context = mvpView as Context
 
         val noticeStockMap = mvpView!!.getNoticeStock()
-        val stockId = noticeStock.stockId!!
-        if (typeMap!!.containsKey(stockId)){
-            noticeStock.type = typeMap!![stockId]
-            noticeStockMap.put(stockId, noticeStock)
-            mvpModel?.addNoticeStock(noticeStock)
-            Toast.makeText(context, "新增成功 下次刷新時顯示", Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(context, "查無代號", Toast.LENGTH_SHORT).show()
-        }
+        noticeStockMap.put(noticeStock.stockId!!, noticeStock)
+
+        mvpModel?.addNoticeStock(noticeStock)
+        val context = mvpView as Context
+        Toast.makeText(context, "新增成功 下次刷新時顯示", Toast.LENGTH_SHORT).show()
     }
 
     override fun updateNoticeStock(noticeStock: NoticeStock) {
@@ -123,9 +118,9 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
         }
     }
 
-    override fun getStockType(onSuccess: (List<String>) -> Unit) {
+    override fun getStockType(onSuccess: (Map<String, String>) -> Unit) {
         if (typeMap != null){
-            onSuccess(typeMap!!.keys.toList())
+            onSuccess(typeMap!!)
             return
         }
         mvpView?.showLoading()
@@ -133,7 +128,7 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
             mvpView?.hideLoading()
             if (it.code > 0){
                 typeMap = it.data!!
-                onSuccess(typeMap!!.keys.toList())
+                onSuccess(typeMap!!)
             }else{
                 mvpView?.showMsg(it.msg, it.code)
             }
