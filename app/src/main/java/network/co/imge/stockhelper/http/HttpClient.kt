@@ -7,7 +7,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import network.co.imge.stockhelper.pojo.MyResponse
-import network.co.imge.stockhelper.pojo.NoticeStock
 import network.co.imge.stockhelper.pojo.TaiexBean
 import network.co.imge.stockhelper.pojo.TwseResponse
 import okhttp3.OkHttpClient

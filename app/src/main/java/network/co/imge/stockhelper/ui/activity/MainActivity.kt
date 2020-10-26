@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -15,14 +14,13 @@ import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.base.BaseActivity
 import network.co.imge.stockhelper.mvp.contract.MainContract
 import network.co.imge.stockhelper.mvp.presenter.MainPresenter
-import network.co.imge.stockhelper.notification.MyService
+import network.co.imge.stockhelper.notification.RunningService
 import network.co.imge.stockhelper.pojo.NoticeStock
 import network.co.imge.stockhelper.pojo.TaiexBean
 import network.co.imge.stockhelper.pojo.TwseResponse
 import network.co.imge.stockhelper.ui.adapter.receclerView.RealtimePriceListAdapter
 import network.co.imge.stockhelper.ui.dialog.AddNoticeStockDialog
 import java.util.*
-import kotlin.system.exitProcess
 
 class MainActivity : BaseActivity(), MainContract.IMainView {
     private val TAG: String = "MainActivity"
@@ -59,7 +57,7 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
 
     override fun onDestroy() {
         super.onDestroy()
-        MyService.stopService(this)
+        RunningService.stopService(this)
         handler?.removeCallbacksAndMessages(null)
 
         presenter?.detachView()
@@ -131,7 +129,7 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
 
     // -------------------- view function --------------------
     fun getRealtimePrice(){
-        MyService.startService(this)
+        RunningService.startService(this)
         presenter?.getRealtimePrice()
         presenter?.getTaiex()
     }
@@ -171,7 +169,7 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
         val now = Date().time
 
         if (now - backTime < 2000) {
-            exitProcess(0)
+            finishAffinity()
         }else{
             Toast.makeText(this, R.string.exit, Toast.LENGTH_SHORT).show()
             backTime = now
@@ -188,7 +186,7 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
 
     // -------------------- mvp function --------------------
     override fun getRealtimePriceCallback(datas: MutableList<TwseResponse>, goals: MutableList<TwseResponse>) {
-        MyService.updateTime(this)
+        RunningService.updateTime(this)
 
         this.datas.clear()
         this.datas.addAll(datas)

@@ -14,7 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".ui.activity.MainActivity"
             android:launchMode="singleTop">
@@ -24,11 +23,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.GoalActivity"/>
+        <activity android:name=".ui.activity.GoalActivity" />
+        <activity
+            android:launchMode="singleTop"
+            android:name=".ui.activity.ExitActivity"/>
 
         <service
-            android:name=".notification.MyService"
-            android:stopWithTask="true"/>
+            android:name=".notification.RunningService"
+            android:stopWithTask="true" />
     </application>
 
 </manifest>
