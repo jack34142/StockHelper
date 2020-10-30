@@ -2,8 +2,6 @@ package network.co.imge.stockhelper.mvp.presenter
 
 import android.content.Context
 import android.widget.Toast
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.toObservable
 import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.base.BasePresenter
 import network.co.imge.stockhelper.mvp.contract.MainContract
@@ -16,9 +14,9 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
     private val TAG: String = "MainPresenter"
 
     private var mvpModel: MainModel? = null
-    val latestPrice: MutableMap<String, Double> = mutableMapOf()
-    val goalMsg: MutableMap<String, String> = mutableMapOf()
-    var typeMap: Map<String, String>? = null
+    private val latestPrice: MutableMap<String, Double> = mutableMapOf()
+    private val goalMsg: MutableMap<String, String> = mutableMapOf()
+    private var typeMap: Map<String, String>? = null
 
     override fun attachView(mvpView: MainContract.IMainView) {
         super.attachView(mvpView)
@@ -32,20 +30,19 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
     }
 
     override fun addNoticeStock(noticeStock: NoticeStock) {
-
         val noticeStockMap = mvpView!!.getNoticeStock()
         noticeStockMap.put(noticeStock.stockId!!, noticeStock)
 
         mvpModel?.addNoticeStock(noticeStock)
         val context = mvpView as Context
-        Toast.makeText(context, "新增成功 下次刷新時顯示", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.add_success, Toast.LENGTH_SHORT).show()
     }
 
     override fun updateNoticeStock(noticeStock: NoticeStock) {
         mvpModel?.updateNoticeStock(noticeStock)
 
         val context = mvpView as Context
-        Toast.makeText(context, "修改成功 下次更新時刷新", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.update_success, Toast.LENGTH_SHORT).show()
     }
 
     override fun deleteNoticeStock(stockId: String): Boolean {
@@ -103,6 +100,8 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
                         }
                     }
                 }
+            }else{
+                mvpView?.showMsg(it.msg, it.code)
             }
             mvpView?.getRealtimePriceCallback(datas, goals)
         }.let {
@@ -112,7 +111,10 @@ class MainPresenter: BasePresenter<MainContract.IMainView>(), MainContract.IMain
 
     override fun getTaiex() {
         mvpModel!!.getTaiex{
-            mvpView?.getTaiexCallback(it.data)
+            if (it.code > 0)
+                mvpView?.getTaiexCallback(it.data)
+            else
+                mvpView?.showMsg(it.msg, it.code)
         }.let {
             disposables?.add(it)
         }

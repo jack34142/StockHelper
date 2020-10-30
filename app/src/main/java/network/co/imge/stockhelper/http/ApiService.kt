@@ -1,10 +1,8 @@
 package network.co.imge.stockhelper.http
 
 import io.reactivex.Observable
-import io.reactivex.Single
 import okhttp3.ResponseBody
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface ApiService {

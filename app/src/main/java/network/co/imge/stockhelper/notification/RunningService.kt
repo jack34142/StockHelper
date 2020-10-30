@@ -86,7 +86,7 @@ class RunningService: Service() {
             .setContentTitle(getString(R.string.running))
             .setContentText(getString(R.string.update_time, SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())))
             .setContentIntent(noticeIntent)
-            .addAction(0, "關閉", exitIntent)
+            .addAction(0, getString(R.string.close), exitIntent)
 
         //设置Notification的ChannelID,否则不能正常显示
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

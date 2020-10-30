@@ -1,19 +1,11 @@
 package network.co.imge.stockhelper.base
 
-import android.content.Context
-import android.os.*
 import androidx.appcompat.app.AppCompatActivity
+import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.ui.dialog.LoadingDialog
 import network.co.imge.stockhelper.ui.dialog.MsgDialog
 
 abstract class BaseActivity : AppCompatActivity(), IView {
-
-    override fun onDestroy() {
-        dispose()
-        super.onDestroy()
-    }
-
-    override fun dispose() {}
 
     override fun showLoading() {
         LoadingDialog.showLoading(this)
@@ -27,9 +19,9 @@ abstract class BaseActivity : AppCompatActivity(), IView {
         val msgDialog = MsgDialog(this)
 
         if (code > 0){
-            msgDialog.setTitle("訊息")
+            msgDialog.setTitle(R.string.msg)
         }else{
-            msgDialog.setTitle("警告")
+            msgDialog.setTitle(R.string.alert)
         }
         msgDialog.setMsg(msg)
         msgDialog.show()

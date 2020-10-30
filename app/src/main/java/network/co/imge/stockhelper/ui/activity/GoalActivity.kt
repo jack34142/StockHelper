@@ -26,7 +26,7 @@ class GoalActivity : AppCompatActivity() {
         initData()
         initListener()
 
-//        startVibrate()
+        startVibrate()
     }
 
     override fun onDestroy() {

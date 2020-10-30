@@ -24,8 +24,8 @@ import java.util.*
 
 class MainActivity : BaseActivity(), MainContract.IMainView {
     private val TAG: String = "MainActivity"
-    
-    var backTime: Long = 0
+
+    private var backTime: Long = 0
     private lateinit var rView_data: RecyclerView
     private lateinit var rView_goal: RecyclerView
     private lateinit var text_taiexTitle: TextView
@@ -176,6 +176,7 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
         }
     }
 
+    // -------------------- mvp function --------------------
     override fun getNoticeStockCallback(stocks: MutableMap<String, NoticeStock>) {
         noticeStockMap = stocks
     }
@@ -184,7 +185,6 @@ class MainActivity : BaseActivity(), MainContract.IMainView {
         return noticeStockMap
     }
 
-    // -------------------- mvp function --------------------
     override fun getRealtimePriceCallback(datas: MutableList<TwseResponse>, goals: MutableList<TwseResponse>) {
         RunningService.updateTime(this)
 

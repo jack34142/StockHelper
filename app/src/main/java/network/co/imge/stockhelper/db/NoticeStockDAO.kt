@@ -3,7 +3,6 @@ package network.co.imge.stockhelper.db
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 import network.co.imge.stockhelper.pojo.NoticeStock
 
 class NoticeStockDAO(context: Context) {
@@ -58,7 +57,8 @@ class NoticeStockDAO(context: Context) {
     }
 
     fun getAll(): Map<String, NoticeStock>{
-        return db!!.query(TABLE_NAME, null, null, null, null, null, null).run {
+        return db!!.query(TABLE_NAME, null, null, null,
+                null, null, null).run {
             mutableMapOf<String, NoticeStock>().apply {
                 while (moveToNext()){
                     val stockId = getString(getColumnIndex(COL_STOCK_ID))

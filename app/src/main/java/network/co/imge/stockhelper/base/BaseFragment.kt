@@ -1,18 +1,11 @@
 package network.co.imge.stockhelper.base
 
 import androidx.fragment.app.Fragment
+import network.co.imge.stockhelper.R
 import network.co.imge.stockhelper.ui.dialog.LoadingDialog
 import network.co.imge.stockhelper.ui.dialog.MsgDialog
 
 abstract class BaseFragment : Fragment(), IView {
-    private val TAG: String = "BaseFragment"
-
-    override fun onDestroy() {
-        dispose()
-        super.onDestroy()
-    }
-
-    override fun dispose() {}
 
     override fun showLoading() {
         LoadingDialog.showLoading(context!!)
@@ -26,9 +19,9 @@ abstract class BaseFragment : Fragment(), IView {
         val msgDialog = MsgDialog(context!!)
 
         if (code > 0){
-            msgDialog.setTitle("訊息")
+            msgDialog.setTitle(R.string.msg)
         }else{
-            msgDialog.setTitle("警告")
+            msgDialog.setTitle(R.string.alert)
         }
         msgDialog.setMsg(msg)
         msgDialog.show()

@@ -35,15 +35,13 @@ class HttpClient private constructor(){
     }
 
     init {
-        val trustAllCerts = arrayOf<TrustManager>(
-            object : X509TrustManager{
+        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager{
                 override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {}
                 override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {}
                 override fun getAcceptedIssuers(): Array<X509Certificate> {
                     return arrayOf()
                 }
-            }
-        )
+        })
         val sslContext = SSLContext.getInstance("SSL")
         sslContext.init(null, trustAllCerts, SecureRandom())
 
@@ -56,8 +54,8 @@ class HttpClient private constructor(){
         })
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        val builder = OkHttpClient.Builder()
-        builder.addInterceptor(logging)
+        val client = OkHttpClient.Builder()
+            .addInterceptor(logging)
             .sslSocketFactory(sslContext.getSocketFactory(), trustAllCerts[0] as X509TrustManager)
             .hostnameVerifier(object : HostnameVerifier{
                 override fun verify(host: String?, session: SSLSession?): Boolean {
@@ -69,11 +67,11 @@ class HttpClient private constructor(){
                 }
             })
             .connectTimeout(30, TimeUnit.SECONDS)
-        val client = builder.build()
+            .build()
 
         val gson = GsonBuilder().setLenient().create()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://www.google.com")
+            .baseUrl("https://mis.twse.com.tw")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
